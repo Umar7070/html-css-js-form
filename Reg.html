@@ -6,19 +6,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registration Form</title>
     <link rel="stylesheet" href="/css/reg.css">
+    <style>
+        .error {
+            color: red;
+            font-size: 12px;
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
 </head>
 
 <body>
     <form id="registerForm">
-        <h2>Registeration Form </h2>
+        <h2>Registration Form</h2>
         <div>
             <input type="text" placeholder="Name" required id="name">
-            <input type="text" placeholder="Username" required id="Username">
+            <span id="nameError" class="error"></span>
+
+            <input type="text" placeholder="Username" required id="username">
+            <span id="usernameError" class="error"></span>
+
             <input type="email" placeholder="Email" required id="email">
-            <input type="text" placeholder="Mobile" required id="mobile">
+            <span id="emailError" class="error"></span>
+
+            <input type="number" placeholder="Mobile" required id="mobile">
+            <span id="mobileError" class="error"></span>
+
             <input type="password" placeholder="Password" required id="password">
+            <span id="passwordError" class="error"></span>
+
             <input type="password" placeholder="Confirm Password" required id="confirmPassword">
+            <span id="confirmPasswordError" class="error"></span>
         </div>
+
         <div class="btn">
             <button type="submit">Submit</button>
         </div>
@@ -28,32 +48,65 @@
     <script>
         document.getElementById('registerForm').addEventListener('submit', function (event) {
             event.preventDefault();
-            var name = document.getElementById('name').value;
-            var Username = document.getElementById('Username').value; 
-            var email = document.getElementById('email').value;
-            var mobile = document.getElementById('mobile').value;
+            let isValid = true;
+
+            var name = document.getElementById('name').value.trim();
+            var username = document.getElementById('username').value.trim();
+            var email = document.getElementById('email').value.trim();
+            var mobile = document.getElementById('mobile').value.trim();
             var password = document.getElementById('password').value;
             var confirmPassword = document.getElementById('confirmPassword').value;
 
-            if (password !== confirmPassword) {
-                alert('Passwords do not match!');
-                return;
+            if (!/^[a-zA-Z\s]+$/.test(name)) {
+                document.getElementById('nameError').innerText = "Name can only contain letters and spaces.";
+                isValid = false;
+            } else {
+                document.getElementById('nameError').innerText = "";
             }
 
-            const user = {
-                name: name,
-                Username: Username,
-                email: email,
-                mobile: mobile,
-                password: password
-            };
+            if (!/^[a-zA-Z0-9]+$/.test(username)) {
+                document.getElementById('usernameError').innerText = "Username must be alphanumeric.";
+                isValid = false;
+            } else {
+                document.getElementById('usernameError').innerText = "";
+            }
 
-            localStorage.setItem(Username, JSON.stringify(user)); 
-            alert('Registration Successful!');
-            window.location.href = 'login.html'; 
+            if (!/^\S+@\S+\.\S+$/.test(email)) {
+                document.getElementById('emailError').innerText = "Enter a valid email address.";
+                isValid = false;
+            } else {
+                document.getElementById('emailError').innerText = "";
+            }
+
+            if (!/^(?:\+91)?[6-9]\d{9}$/.test(mobile)) {
+                document.getElementById('mobileError').innerText = ("Please enter a valid Indian mobile number (10 digits or with +91");
+                isValid = false;
+            } else {
+                document.getElementById('mobileError').innerText = "";
+            }
+
+            if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/.test(password)) {
+                document.getElementById('passwordError').innerText = "Password must be at least 6 characters and contain 1 uppercase, 1 lowercase, 1 number, and 1 special character.";
+                isValid = false;
+            } else {
+                document.getElementById('passwordError').innerText = "";
+            }
+
+            if (password !== confirmPassword) {
+                document.getElementById('confirmPasswordError').innerText = "Passwords do not match.";
+                isValid = false;
+            } else {
+                document.getElementById('confirmPasswordError').innerText = "";
+            }
+
+            if (isValid) {
+                const user = { name, username, email, mobile, password };
+                localStorage.setItem(username, JSON.stringify(user));
+                alert('Registration Successful!');
+                window.location.href = 'login.html';
+            }
         });
     </script>
-
 </body>
 
 </html>
